@@ -29,8 +29,24 @@ class App extends Component {
     super();
     this.state={
       input:'',
-      imageUrl:'' 
+      imageUrl:'' ,
+      faceBox:'',
     };
+  }
+
+  findFaceLoc=(obj)=>{
+    const faceArray=obj.outputs[0].data.regions[0].region_info.bounding_box;
+    const img=document.getElementById("inputImage");
+    const width=Number(img.width);
+    const height=Number(img.height);
+    const box={
+      topRow:height*faceArray.top_row,
+      leftCol:width*faceArray.left_col,
+      bottomRow:height-(height*faceArray.bottom_row),
+      rightCol:width-(width*faceArray.right_col),
+    }
+
+    this.setState({faceBox:box})
   }
 
   onChangeFunc=(event)=>{
@@ -39,14 +55,10 @@ class App extends Component {
 
  onClickFunc=()=>{
     this.setState({imageUrl:this.state.input});
-    app.models.predict(Clarifai.FACE_DETECT_MODEL,this.state.input).then(
-      function(response) {
-        console.log(response.outputs[0].data.regions[0].region_info.bounding_box);
-      },
-      function(err) {
-     
-      }
-    );
+
+    app.models.predict(Clarifai.FACE_DETECT_MODEL,this.state.input)
+    .then(response=>this.findFaceLoc(response))
+    .catch(err=>console.log(err));
   } 
 
   render() {
@@ -66,7 +78,7 @@ class App extends Component {
         </div>
         <SearchBox onClickFunc={this.onClickFunc} onChangeFunc={this.onChangeFunc}/>
         <div className="ma4">
-          <ImageRecog imageUrl={this.state.imageUrl}/>
+          <ImageRecog imageUrl={this.state.imageUrl} faceBox={this.state.faceBox}/>
         </div>
       </div>
         

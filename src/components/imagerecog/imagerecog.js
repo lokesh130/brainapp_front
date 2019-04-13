@@ -1,9 +1,14 @@
 import React from 'react';
+import './imagerecog.css';
 
-const ImageRecog=({imageUrl})=>{
+const ImageRecog=({imageUrl,faceBox})=>{
+	console.log(faceBox);
   return (
-    <div className="center">
-    <img src={imageUrl} alt="face" width="auto" height='500px'/>
+    <div className="center ">
+    <div className="absolute">
+	    <img id="inputImage" src={imageUrl} alt="" width="auto" height='500px'/>
+	    <div className="bounding_box" style={{top:faceBox.topRow,right:faceBox.rightCol,bottom:faceBox.bottomRow,left:faceBox.leftCol}}></div>
+    </div>
     </div>
   );
 }
