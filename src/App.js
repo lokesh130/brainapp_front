@@ -3,6 +3,8 @@ import Pane from './components/pane/pane';
 import Logo from './components/logo/logo';
 import SearchBox from './components/searchbox/searchbox';
 import ImageRecog from './components/imagerecog/imagerecog';
+import SignIn from './components/signin/signin';
+import Register from './components/register/register';
 import Particles from 'react-particles-js';
 import Clarifai from 'clarifai';
 import './App.css';
@@ -31,7 +33,12 @@ class App extends Component {
       input:'',
       imageUrl:'' ,
       faceBox:'',
+      route:'signin',
     };
+  }
+
+  changeState=(str)=>{
+    this.setState({route:str});
   }
 
   findFaceLoc=(obj)=>{
@@ -65,21 +72,41 @@ class App extends Component {
     return (
       <div >
         <Particles  params={obj} className="particlebg" />
-        <Pane/>
+        <Pane active={this.state.route} changeState={this.changeState}/>
         <Logo/>
-        <div className="center heading1">
-        <p>Lokesh, your rank is .....</p>
-        </div>
-        <div className="center heading1">
-        <p>#5</p>
-        </div>
-        <div className="center heading2">
-        <p>This magic brain will detect faces in your image</p>
-        </div>
-        <SearchBox onClickFunc={this.onClickFunc} onChangeFunc={this.onChangeFunc}/>
-        <div className="ma4">
-          <ImageRecog imageUrl={this.state.imageUrl} faceBox={this.state.faceBox}/>
-        </div>
+        
+        {
+          (this.state.route==='home')?
+            <div>
+              <div className="center heading1">
+                <p>Lokesh, your rank is .....</p>
+              </div>
+              <div className="center heading1">
+                <p>#5</p>
+              </div>
+              <div className="center heading2">
+                <p>This magic brain will detect faces in your image</p>
+              </div>
+              <SearchBox onClickFunc={this.onClickFunc} onChangeFunc={this.onChangeFunc}/>
+              <div className="ma4">
+                <ImageRecog imageUrl={this.state.imageUrl} faceBox={this.state.faceBox}/>
+              </div>
+            </div>
+          :
+          (
+            (this.state.route==='signin')?
+              <div>
+                  <SignIn changeState={this.changeState}/>
+              </div>
+            :
+              <div>
+                  <Register changeState={this.changeState}/>
+              </div>
+           
+          )
+          
+        }
+        
       </div>
         
     );
