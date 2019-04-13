@@ -7,3 +7,25 @@
   left:0;
   z-index: -1;
 }
+
+@font-face {
+  font-family: myFirstFont1;
+  src: url("Carrington.ttf");
+}
+
+@font-face {
+  font-family: myFirstFont2;
+  src: url("Parakeet.ttf");
+}
+
+.heading1
+{
+	font-size:60px;
+	font-family:"myFirstFont1",fantasy;
+}
+
+.heading2
+{
+	font-size:40px;
+	font-family:"myFirstFont2",fantasy;
+}
