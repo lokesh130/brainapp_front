@@ -2,7 +2,6 @@ import React from 'react';
 import './imagerecog.css';
 
 const ImageRecog=({imageUrl,faceBox})=>{
-	console.log(faceBox);
   return (
     <div className="center ">
     <div className="absolute">

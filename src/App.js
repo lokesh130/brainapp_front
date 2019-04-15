@@ -34,10 +34,18 @@ class App extends Component {
       imageUrl:'' ,
       faceBox:'',
       route:'signin',
+      user:{
+        name:'',
+        email:'',
+        id:'',
+        entries:0,
+        time:'',
+      }
     };
   }
 
   changeState=(str)=>{
+      this.setState({imageUrl:''});
     this.setState({route:str});
   }
 
@@ -64,9 +72,41 @@ class App extends Component {
     this.setState({imageUrl:this.state.input});
 
     app.models.predict(Clarifai.FACE_DETECT_MODEL,this.state.input)
-    .then(response=>this.findFaceLoc(response))
+    .then((response)=>{
+      this.findFaceLoc(response);
+
+      fetch('http://localhost:3006/images',{
+        method:'put',
+        headers:{'content-type':'application/json'},
+        body:JSON.stringify({
+          id:this.state.user.id,
+        })
+      })
+      .then(response=>response.json())
+      .then((data)=>{
+        if(data!=='failure'){
+        this.setState(Object.assign(this.state.user,{entries:data.entries}));
+        }
+        else {
+
+          console.log("error entries");
+        }
+      })
+      .catch(console.log);
+    })
     .catch(err=>console.log(err));
-  } 
+  }
+
+
+  loadProfile=(data)=>{
+    this.setState(Object.assign(this.state.user,{
+      name:data.name,
+      email:data.email,
+      id:data.id,
+      entries:data.entries,
+      time:data.time,
+    }));
+  }
 
   render() {
     return (
@@ -74,15 +114,15 @@ class App extends Component {
         <Particles  params={obj} className="particlebg" />
         <Pane active={this.state.route} changeState={this.changeState}/>
         <Logo/>
-        
+
         {
           (this.state.route==='home')?
             <div>
               <div className="center heading1">
-                <p>Lokesh, your rank is .....</p>
+                <p>{this.state.user.name+" your rank is ....."}</p>
               </div>
               <div className="center heading1">
-                <p>#5</p>
+                <p>{"#" + this.state.user.entries}</p>
               </div>
               <div className="center heading2">
                 <p>This magic brain will detect faces in your image</p>
@@ -96,19 +136,19 @@ class App extends Component {
           (
             (this.state.route==='signin')?
               <div>
-                  <SignIn changeState={this.changeState}/>
+                  <SignIn  changeState={this.changeState} loadProfile={this.loadProfile}/>
               </div>
             :
               <div>
                   <Register changeState={this.changeState}/>
               </div>
-           
+
           )
-          
+
         }
-        
+
       </div>
-        
+
     );
   }
 }
